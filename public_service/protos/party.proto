@@ -4,12 +4,12 @@ package protos;
 option go_package = "/genproto;public";
 
 service PartyService{
-    rpc Create(PartyCreate) returns (Void){};
+    rpc Create(PartyCreate) returns (Party){};
     rpc Update(PartyUpdate) returns (Void){};
     rpc Delete(PartyDelete) returns (Void){};
     rpc GetById(PartyById) returns (Party){};
-    rpc GetAll(GetAllPartyRequest) returns (GetAllPartyResponse){};
 }
+
 message Void{}
 message Party {
     string id = 1; 

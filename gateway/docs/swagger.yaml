@@ -1,5 +1,127 @@
 basePath: /api/v1
 definitions:
+  public.GetAllPartyResponse:
+    properties:
+      parties:
+        items:
+          $ref: '#/definitions/public.Party'
+        type: array
+    type: object
+  public.GetAllPublicRes:
+    properties:
+      publics:
+        items:
+          $ref: '#/definitions/public.Public'
+        type: array
+    type: object
+  public.Party:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      opened_date:
+        type: string
+      slogan:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  public.PartyCreate:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      opened_date:
+        type: string
+      slogan:
+        type: string
+    type: object
+  public.PartyUpdate:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      opened_date:
+        type: string
+      slogan:
+        type: string
+    type: object
+  public.Public:
+    properties:
+      birthday:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: integer
+      email:
+        type: string
+      gender:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      name:
+        type: string
+      party_id:
+        type: string
+      phone:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  public.PublicCreate:
+    properties:
+      birthday:
+        type: string
+      email:
+        type: string
+      gender:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      name:
+        type: string
+      party_id:
+        type: string
+      phone:
+        type: string
+    type: object
+  public.PublicUpdate:
+    properties:
+      birthday:
+        type: string
+      email:
+        type: string
+      gender:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      name:
+        type: string
+      party_id:
+        type: string
+      phone:
+        type: string
+    type: object
   vote.Candidate:
     properties:
       created_at:
@@ -271,7 +393,6 @@ paths:
       - description: Election ID
         in: query
         name: election_id
-        required: true
         type: string
       - description: Public ID (optional)
         in: query
@@ -522,6 +643,354 @@ paths:
       summary: Get election results
       tags:
       - Elections
+  /party:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a party by its ID.
+      parameters:
+      - description: Party ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vote.Void'
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "404":
+          description: Resource not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a party
+      tags:
+      - Parties
+    post:
+      consumes:
+      - application/json
+      description: Creates a new party.
+      parameters:
+      - description: Party data
+        in: body
+        name: party
+        required: true
+        schema:
+          $ref: '#/definitions/public.PartyCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/public.Party'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a new party
+      tags:
+      - Parties
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing party.
+      parameters:
+      - description: Party data
+        in: body
+        name: party
+        required: true
+        schema:
+          $ref: '#/definitions/public.PartyUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vote.Void'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "404":
+          description: Resource not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a party
+      tags:
+      - Parties
+  /party/all:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all parties.
+      parameters:
+      - description: Opened date (optional)
+        in: query
+        name: opened_date
+        type: string
+      - description: Name (optional)
+        in: query
+        name: name
+        type: string
+      - description: Slogan (optional)
+        in: query
+        name: slogan
+        type: string
+      - description: Description (optional)
+        in: query
+        name: description
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/public.GetAllPartyResponse'
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get all parties
+      tags:
+      - Parties
+  /party/id:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a party by its ID.
+      parameters:
+      - description: Party ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/public.Party'
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "404":
+          description: Resource not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get a party by its ID
+      tags:
+      - Parties
+  /public:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a public by its ID.
+      parameters:
+      - description: Public ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vote.Void'
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "404":
+          description: Resource not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a public
+      tags:
+      - Publics
+    post:
+      consumes:
+      - application/json
+      description: Creates a new public.
+      parameters:
+      - description: Public data
+        in: body
+        name: public
+        required: true
+        schema:
+          $ref: '#/definitions/public.PublicCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/public.Public'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a new public
+      tags:
+      - Publics
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing public.
+      parameters:
+      - description: Public data
+        in: body
+        name: public
+        required: true
+        schema:
+          $ref: '#/definitions/public.PublicUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vote.Void'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "404":
+          description: Resource not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a public
+      tags:
+      - Publics
+  /public/all:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all publics.
+      parameters:
+      - description: Party ID (optional)
+        in: query
+        name: party_id
+        type: string
+      - description: Name (optional)
+        in: query
+        name: name
+        type: string
+      - description: Last name (optional)
+        in: query
+        name: last_name
+        type: string
+      - description: Phone (optional)
+        in: query
+        name: phone
+        type: string
+      - description: Email (optional)
+        in: query
+        name: email
+        type: string
+      - description: Birthday (optional)
+        in: query
+        name: birthday
+        type: string
+      - description: Gender (optional)
+        in: query
+        name: gender
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/public.GetAllPublicRes'
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get all publics
+      tags:
+      - Publics
+  /public/id:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a public by its ID.
+      parameters:
+      - description: Public ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/public.Public'
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "404":
+          description: Resource not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get a public by its ID
+      tags:
+      - Publics
   /public_vote:
     post:
       consumes:

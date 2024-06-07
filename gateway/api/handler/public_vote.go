@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/online_voting_service/gateway/genproto/public"
 	"github.com/online_voting_service/gateway/genproto/vote"
 )
 
@@ -32,7 +33,15 @@ func (h *HandlerStruct) CreatePublicVoteHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error Binding data: " + err.Error()})
 		return
 	}
-
+	checkValid, err := h.Public.IsValidPublic(ctx, &public.ValidPublicReq{Id: publicVoteReq.PublicId})
+	if checkValid.Valid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Public id is not valid: " + err.Error()})
+		return
+	}
+	if !checkValid.Valid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "public id is not valid:" + publicVoteReq.PublicId})
+		return
+	}
 	publicVoteRes, err := h.PublicVote.Create(ctx, &publicVoteReq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create public vote: " + err.Error()})

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/online_voting_service/gateway/genproto/public"
 	"github.com/online_voting_service/gateway/genproto/vote"
 )
 
@@ -33,6 +34,15 @@ func (h *HandlerStruct) CreateCandidateHandler(c *gin.Context) {
 		return
 	}
 
+	checkValid, err := h.Public.IsValidPublic(ctx, &public.ValidPublicReq{Id: candidateReq.PublicId})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "public id is not valid: " + err.Error()})
+		return
+	}
+	if !checkValid.Valid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "public id is not valid:" + candidateReq.PublicId})
+		return
+	}
 	candidateRes, err := h.Candidate.Create(ctx, &candidateReq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create candidate: " + err.Error()})
@@ -146,7 +156,7 @@ func (h *HandlerStruct) GetCandidateByIdHandler(c *gin.Context) {
 // @Tags Candidates
 // @Accept json
 // @Produce json
-// @Param election_id query string true "Election ID"
+// @Param election_id query string false "Election ID"
 // @Param public_id query string false "Public ID (optional)"
 // @Success 200 {object} vote.GetAllCandidateRes
 // @Failure 400 {object} string "Invalid request parameters"

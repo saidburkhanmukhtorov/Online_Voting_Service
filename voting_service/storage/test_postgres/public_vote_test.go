@@ -7,6 +7,7 @@ import (
 	"time"
 
 	vote "vote/genproto"
+	"vote/storage/postgres"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -14,7 +15,7 @@ import (
 )
 
 // Create a test database connection pool for PublicVote
-func newTestPublicVote(t *testing.T) *PublicVote {
+func newTestPublicVote(t *testing.T) *postgres.PublicVote {
 	connString := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s",
 		"sayyidmuhammad",
 		"root",
@@ -27,7 +28,7 @@ func newTestPublicVote(t *testing.T) *PublicVote {
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
-	return &PublicVote{Db: db}
+	return &postgres.PublicVote{Db: db}
 }
 
 // Create a test public vote object

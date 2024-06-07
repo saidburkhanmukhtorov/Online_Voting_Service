@@ -2,15 +2,24 @@ syntax = "proto3";
 
 package protos;
 option go_package = "/public;public";
-import "github.com/online_voting_service/gateway/protos/vote/candidate.proto";
+import "protos/vote/candidate.proto";
 
 service PublicService{ 
-    rpc Create(PublicCreate) returns (Void){};
+    rpc Create(PublicCreate) returns (Public){};
     rpc Update(PublicUpdate) returns (Void){};
     rpc Delete(PublicDelete) returns (Void){};
     rpc GetById(PublicById) returns (Public){};
     rpc GetAll(GetAllPublicReq) returns (GetAllPublicRes){};
+    rpc IsValidPublic(ValidPublicReq) returns(ValidPublicRes){};
 }
+message ValidPublicReq{
+    string id = 1;
+}
+
+message ValidPublicRes{
+    bool valid = 1;
+}
+
 message Public {
     string id = 1; 
     string name = 2;

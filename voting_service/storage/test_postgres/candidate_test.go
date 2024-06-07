@@ -6,6 +6,7 @@ import (
 	"log"
 	"testing"
 	vote "vote/genproto"
+	"vote/storage/postgres"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -13,7 +14,7 @@ import (
 )
 
 // Create a test database connection pool
-func newTestCandidate(t *testing.T) *CandidateDb {
+func newTestCandidate(t *testing.T) *postgres.CandidateDb {
 	connString := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s",
 		"sayyidmuhammad", // Replace with your database username
 		"root",           // Replace with your database password
@@ -26,7 +27,7 @@ func newTestCandidate(t *testing.T) *CandidateDb {
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
-	return &CandidateDb{Db: db}
+	return &postgres.CandidateDb{Db: db}
 }
 
 // Create a test candidate object
@@ -86,7 +87,7 @@ func TestDeleteCandidate(t *testing.T) {
 	}
 
 	_, err = stgCandidate.GetById(context.TODO(), &vote.CandidateById{Id: createdCandidate.Id})
-	assert.Equal(t, ErrCandidateNotFound, err)
+	assert.Equal(t, postgres.ErrCandidateNotFound, err)
 }
 
 func TestUpdateCandidate(t *testing.T) {

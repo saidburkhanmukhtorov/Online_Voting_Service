@@ -11,17 +11,19 @@ type StorageI interface {
 	Public() PublicI
 }
 type PartyI interface {
-	Create(ctx context.Context, partyReq *public.PartyCreate) error
+	Create(ctx context.Context, partyReq *public.PartyCreate) (*public.Party, error)
 	Update(ctx context.Context, partyReq *public.PartyUpdate) error
 	Delete(ctx context.Context, partyReq *public.PartyDelete) error
 	GetById(ctx context.Context, partyReq *public.PartyById) (*public.Party, error)
 	GetAll(ctx context.Context, partyReq *public.GetAllPartyRequest) (*public.GetAllPartyResponse, error)
+	IsDeleted(ctx context.Context, partyId *string) (bool, error)
 }
 
 type PublicI interface {
-	Create(ctx context.Context, publicReq *public.PublicCreate) error
+	Create(ctx context.Context, publicReq *public.PublicCreate) (*public.Public, error)
 	Update(ctx context.Context, publicReq *public.PublicUpdate) error
 	Delete(ctx context.Context, publicReq *public.PublicDelete) error
 	GetById(ctx context.Context, publicReq *public.PublicById) (*public.Public, error)
 	GetAll(ctx context.Context, publicReq *public.GetAllPublicReq) (*public.GetAllPublicRes, error)
+	IsValidPublic(ctx context.Context, in *public.ValidPublicReq) (*public.ValidPublicRes, error)
 }

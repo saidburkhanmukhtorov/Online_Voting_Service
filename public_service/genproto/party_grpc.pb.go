@@ -23,18 +23,16 @@ const (
 	PartyService_Update_FullMethodName  = "/protos.PartyService/Update"
 	PartyService_Delete_FullMethodName  = "/protos.PartyService/Delete"
 	PartyService_GetById_FullMethodName = "/protos.PartyService/GetById"
-	PartyService_GetAll_FullMethodName  = "/protos.PartyService/GetAll"
 )
 
 // PartyServiceClient is the client API for PartyService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PartyServiceClient interface {
-	Create(ctx context.Context, in *PartyCreate, opts ...grpc.CallOption) (*Void, error)
+	Create(ctx context.Context, in *PartyCreate, opts ...grpc.CallOption) (*Party, error)
 	Update(ctx context.Context, in *PartyUpdate, opts ...grpc.CallOption) (*Void, error)
 	Delete(ctx context.Context, in *PartyDelete, opts ...grpc.CallOption) (*Void, error)
 	GetById(ctx context.Context, in *PartyById, opts ...grpc.CallOption) (*Party, error)
-	GetAll(ctx context.Context, in *GetAllPartyRequest, opts ...grpc.CallOption) (*GetAllPartyResponse, error)
 }
 
 type partyServiceClient struct {
@@ -45,9 +43,9 @@ func NewPartyServiceClient(cc grpc.ClientConnInterface) PartyServiceClient {
 	return &partyServiceClient{cc}
 }
 
-func (c *partyServiceClient) Create(ctx context.Context, in *PartyCreate, opts ...grpc.CallOption) (*Void, error) {
+func (c *partyServiceClient) Create(ctx context.Context, in *PartyCreate, opts ...grpc.CallOption) (*Party, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Void)
+	out := new(Party)
 	err := c.cc.Invoke(ctx, PartyService_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -85,25 +83,14 @@ func (c *partyServiceClient) GetById(ctx context.Context, in *PartyById, opts ..
 	return out, nil
 }
 
-func (c *partyServiceClient) GetAll(ctx context.Context, in *GetAllPartyRequest, opts ...grpc.CallOption) (*GetAllPartyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAllPartyResponse)
-	err := c.cc.Invoke(ctx, PartyService_GetAll_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PartyServiceServer is the server API for PartyService service.
 // All implementations must embed UnimplementedPartyServiceServer
 // for forward compatibility
 type PartyServiceServer interface {
-	Create(context.Context, *PartyCreate) (*Void, error)
+	Create(context.Context, *PartyCreate) (*Party, error)
 	Update(context.Context, *PartyUpdate) (*Void, error)
 	Delete(context.Context, *PartyDelete) (*Void, error)
 	GetById(context.Context, *PartyById) (*Party, error)
-	GetAll(context.Context, *GetAllPartyRequest) (*GetAllPartyResponse, error)
 	mustEmbedUnimplementedPartyServiceServer()
 }
 
@@ -111,7 +98,7 @@ type PartyServiceServer interface {
 type UnimplementedPartyServiceServer struct {
 }
 
-func (UnimplementedPartyServiceServer) Create(context.Context, *PartyCreate) (*Void, error) {
+func (UnimplementedPartyServiceServer) Create(context.Context, *PartyCreate) (*Party, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedPartyServiceServer) Update(context.Context, *PartyUpdate) (*Void, error) {
@@ -122,9 +109,6 @@ func (UnimplementedPartyServiceServer) Delete(context.Context, *PartyDelete) (*V
 }
 func (UnimplementedPartyServiceServer) GetById(context.Context, *PartyById) (*Party, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetById not implemented")
-}
-func (UnimplementedPartyServiceServer) GetAll(context.Context, *GetAllPartyRequest) (*GetAllPartyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
 func (UnimplementedPartyServiceServer) mustEmbedUnimplementedPartyServiceServer() {}
 
@@ -211,24 +195,6 @@ func _PartyService_GetById_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PartyService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllPartyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PartyServiceServer).GetAll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PartyService_GetAll_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PartyServiceServer).GetAll(ctx, req.(*GetAllPartyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PartyService_ServiceDesc is the grpc.ServiceDesc for PartyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -251,10 +217,6 @@ var PartyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetById",
 			Handler:    _PartyService_GetById_Handler,
-		},
-		{
-			MethodName: "GetAll",
-			Handler:    _PartyService_GetAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

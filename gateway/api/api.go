@@ -10,10 +10,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewGin(connVote *grpc.ClientConn) *gin.Engine {
+func NewGin(connPublic, connVote *grpc.ClientConn) *gin.Engine {
 
 	// handler support database connection
-	handler := handler.NewHandler(connVote)
+	handler := handler.NewHandler(connPublic, connVote)
 
 	// Connecting to gin router
 	router := gin.Default()
@@ -38,11 +38,11 @@ func NewGin(connVote *grpc.ClientConn) *gin.Engine {
 
 	candidate := router.Group("/api/v1/candidate")
 	{
-		candidate.POST("", handler.CreateCandidateHandler)      // POST /api/v1/candidate
-		candidate.PUT("", handler.UpdateCandidateHandler)       // PUT /api/v1/candidate
-		candidate.DELETE("", handler.DeleteCandidateHandler)    // DELETE /api/v1/candidate
-		candidate.POST("/id", handler.GetCandidateByIdHandler)  // POST /api/v1/candidate/id
-		candidate.POST("/all", handler.GetAllCandidatesHandler) // POST /api/v1/candidate/all
+		candidate.POST("", handler.CreateCandidateHandler)     // POST /api/v1/candidate
+		candidate.PUT("", handler.UpdateCandidateHandler)      // PUT /api/v1/candidate
+		candidate.DELETE("", handler.DeleteCandidateHandler)   // DELETE /api/v1/candidate
+		candidate.GET("/id", handler.GetCandidateByIdHandler)  // POST /api/v1/candidate/id
+		candidate.GET("/all", handler.GetAllCandidatesHandler) // POST /api/v1/candidate/all
 	}
 	publicVote := router.Group("/api/v1/public_vote")
 	{
@@ -51,6 +51,22 @@ func NewGin(connVote *grpc.ClientConn) *gin.Engine {
 		publicVote.GET("/vote/id", handler.GetPublicVoteByVoteIdHandler)     // GET /api/v1/public_vote/vote/id
 		publicVote.GET("/public/all", handler.GetAllPublicVotesHandler)      // GET /api/v1/public_vote/public/all
 		publicVote.GET("/vote/all", handler.GetAllVotesHandler)              // GET /api/v1/public_vote/vote/all
+	}
+	party := router.Group("api/v1/party")
+	{
+		party.POST("", handler.CreatePartyHandler)      // POST /api/v1/party
+		party.PUT("", handler.UpdatePartyHandler)       // PUT /api/v1/party
+		party.DELETE("", handler.DeletePartyHandler)    // DELETE /api/v1/party
+		party.GET("/id", handler.GetPartyByIdHandler)   // GET /api/v1/party/id
+		party.GET("/all", handler.GetAllPartiesHandler) // GET /api/v1/party/all
+	}
+	public := router.Group("api/v1/public")
+	{
+		public.POST("", handler.CreatePublicHandler)     // POST /api/v1/public
+		public.PUT("", handler.UpdatePublicHandler)      // PUT /api/v1/public
+		public.DELETE("", handler.DeletePublicHandler)   // DELETE /api/v1/public
+		public.GET("/id", handler.GetPublicByIdHandler)  // GET /api/v1/public/id
+		public.GET("/all", handler.GetAllPublicsHandler) // GET /api/v1/public/all
 	}
 	return router
 }

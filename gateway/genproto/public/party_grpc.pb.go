@@ -31,7 +31,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PartyServiceClient interface {
-	Create(ctx context.Context, in *PartyCreate, opts ...grpc.CallOption) (*vote.Void, error)
+	Create(ctx context.Context, in *PartyCreate, opts ...grpc.CallOption) (*Party, error)
 	Update(ctx context.Context, in *PartyUpdate, opts ...grpc.CallOption) (*vote.Void, error)
 	Delete(ctx context.Context, in *PartyDelete, opts ...grpc.CallOption) (*vote.Void, error)
 	GetById(ctx context.Context, in *PartyById, opts ...grpc.CallOption) (*Party, error)
@@ -46,9 +46,9 @@ func NewPartyServiceClient(cc grpc.ClientConnInterface) PartyServiceClient {
 	return &partyServiceClient{cc}
 }
 
-func (c *partyServiceClient) Create(ctx context.Context, in *PartyCreate, opts ...grpc.CallOption) (*vote.Void, error) {
+func (c *partyServiceClient) Create(ctx context.Context, in *PartyCreate, opts ...grpc.CallOption) (*Party, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(vote.Void)
+	out := new(Party)
 	err := c.cc.Invoke(ctx, PartyService_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func (c *partyServiceClient) GetAll(ctx context.Context, in *GetAllPartyRequest,
 // All implementations must embed UnimplementedPartyServiceServer
 // for forward compatibility
 type PartyServiceServer interface {
-	Create(context.Context, *PartyCreate) (*vote.Void, error)
+	Create(context.Context, *PartyCreate) (*Party, error)
 	Update(context.Context, *PartyUpdate) (*vote.Void, error)
 	Delete(context.Context, *PartyDelete) (*vote.Void, error)
 	GetById(context.Context, *PartyById) (*Party, error)
@@ -112,7 +112,7 @@ type PartyServiceServer interface {
 type UnimplementedPartyServiceServer struct {
 }
 
-func (UnimplementedPartyServiceServer) Create(context.Context, *PartyCreate) (*vote.Void, error) {
+func (UnimplementedPartyServiceServer) Create(context.Context, *PartyCreate) (*Party, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedPartyServiceServer) Update(context.Context, *PartyUpdate) (*vote.Void, error) {

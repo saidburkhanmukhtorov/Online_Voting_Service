@@ -6,13 +6,14 @@ import (
 	"log"
 	"testing"
 	vote "vote/genproto"
+	"vote/storage/postgres"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
 )
 
 // Create a test database connection pool
-func newTestElection(t *testing.T) *ElectionDb {
+func newTestElection(t *testing.T) *postgres.ElectionDb {
 
 	connString := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s",
 		"sayyidmuhammad", // Replace with your database username
@@ -26,7 +27,7 @@ func newTestElection(t *testing.T) *ElectionDb {
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
-	return &ElectionDb{Db: db}
+	return &postgres.ElectionDb{Db: db}
 }
 
 // Create a test user object
@@ -89,7 +90,7 @@ func TestDeleteElection(t *testing.T) {
 	}
 
 	_, err = stgElection.GetById(context.TODO(), &vote.ElectionById{Id: createdElection.Id})
-	assert.Equal(t, ErrElectionNotFound, err)
+	assert.Equal(t, postgres.ErrElectionNotFound, err)
 }
 
 func TestUpdateElection(t *testing.T) {

@@ -133,10 +133,11 @@ func (CandidateDb *CandidateDb) GetById(ctx context.Context, id *vote.CandidateB
 		&updatedAt,
 		&candidate.DeletedAt,
 	)
+	log.Println(candidate.ElectionId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			slog.Error("Error getting candidate by id: %v", ErrCandidateNotFound)
-			return nil, ErrCandidateNotFound
+			return nil, err
 		}
 		slog.Error("Error getting candidate by ID: %v", err)
 		return nil, err

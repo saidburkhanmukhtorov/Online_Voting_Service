@@ -24,8 +24,14 @@ func main() {
 	}
 	defer connVote.Close()
 
+	connPublic, err := grpc.NewClient("localhost:8082", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Failed to connect to Vote service: %v", err)
+	}
+	defer connPublic.Close()
+
 	// Create and run the Gin router
-	engine := api.NewGin(connVote)
+	engine := api.NewGin(connPublic, connVote)
 	if err := engine.Run(":8080"); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

@@ -14,10 +14,10 @@ type HandlerStruct struct {
 	PublicVote vote.PublicVoteServiceClient
 }
 
-func NewHandler(connVote *grpc.ClientConn) *HandlerStruct {
+func NewHandler(connPublic, connVote *grpc.ClientConn) *HandlerStruct {
 	return &HandlerStruct{
-		// Public:     public.NewPublicServiceClient(connPublic),
-		// Party:      public.NewPartyServiceClient(connPublic),
+		Public:     public.NewPublicServiceClient(connPublic),
+		Party:      public.NewPartyServiceClient(connPublic),
 		Candidate:  vote.NewCandidateServiceClient(connVote),
 		Election:   vote.NewElectionServiceClient(connVote),
 		PublicVote: vote.NewPublicVoteServiceClient(connVote),

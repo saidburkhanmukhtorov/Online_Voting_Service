@@ -20,22 +20,24 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	PublicService_Create_FullMethodName  = "/protos.PublicService/Create"
-	PublicService_Update_FullMethodName  = "/protos.PublicService/Update"
-	PublicService_Delete_FullMethodName  = "/protos.PublicService/Delete"
-	PublicService_GetById_FullMethodName = "/protos.PublicService/GetById"
-	PublicService_GetAll_FullMethodName  = "/protos.PublicService/GetAll"
+	PublicService_Create_FullMethodName        = "/protos.PublicService/Create"
+	PublicService_Update_FullMethodName        = "/protos.PublicService/Update"
+	PublicService_Delete_FullMethodName        = "/protos.PublicService/Delete"
+	PublicService_GetById_FullMethodName       = "/protos.PublicService/GetById"
+	PublicService_GetAll_FullMethodName        = "/protos.PublicService/GetAll"
+	PublicService_IsValidPublic_FullMethodName = "/protos.PublicService/IsValidPublic"
 )
 
 // PublicServiceClient is the client API for PublicService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PublicServiceClient interface {
-	Create(ctx context.Context, in *PublicCreate, opts ...grpc.CallOption) (*vote.Void, error)
+	Create(ctx context.Context, in *PublicCreate, opts ...grpc.CallOption) (*Public, error)
 	Update(ctx context.Context, in *PublicUpdate, opts ...grpc.CallOption) (*vote.Void, error)
 	Delete(ctx context.Context, in *PublicDelete, opts ...grpc.CallOption) (*vote.Void, error)
 	GetById(ctx context.Context, in *PublicById, opts ...grpc.CallOption) (*Public, error)
 	GetAll(ctx context.Context, in *GetAllPublicReq, opts ...grpc.CallOption) (*GetAllPublicRes, error)
+	IsValidPublic(ctx context.Context, in *ValidPublicReq, opts ...grpc.CallOption) (*ValidPublicRes, error)
 }
 
 type publicServiceClient struct {
@@ -46,9 +48,9 @@ func NewPublicServiceClient(cc grpc.ClientConnInterface) PublicServiceClient {
 	return &publicServiceClient{cc}
 }
 
-func (c *publicServiceClient) Create(ctx context.Context, in *PublicCreate, opts ...grpc.CallOption) (*vote.Void, error) {
+func (c *publicServiceClient) Create(ctx context.Context, in *PublicCreate, opts ...grpc.CallOption) (*Public, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(vote.Void)
+	out := new(Public)
 	err := c.cc.Invoke(ctx, PublicService_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -96,15 +98,26 @@ func (c *publicServiceClient) GetAll(ctx context.Context, in *GetAllPublicReq, o
 	return out, nil
 }
 
+func (c *publicServiceClient) IsValidPublic(ctx context.Context, in *ValidPublicReq, opts ...grpc.CallOption) (*ValidPublicRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ValidPublicRes)
+	err := c.cc.Invoke(ctx, PublicService_IsValidPublic_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PublicServiceServer is the server API for PublicService service.
 // All implementations must embed UnimplementedPublicServiceServer
 // for forward compatibility
 type PublicServiceServer interface {
-	Create(context.Context, *PublicCreate) (*vote.Void, error)
+	Create(context.Context, *PublicCreate) (*Public, error)
 	Update(context.Context, *PublicUpdate) (*vote.Void, error)
 	Delete(context.Context, *PublicDelete) (*vote.Void, error)
 	GetById(context.Context, *PublicById) (*Public, error)
 	GetAll(context.Context, *GetAllPublicReq) (*GetAllPublicRes, error)
+	IsValidPublic(context.Context, *ValidPublicReq) (*ValidPublicRes, error)
 	mustEmbedUnimplementedPublicServiceServer()
 }
 
@@ -112,7 +125,7 @@ type PublicServiceServer interface {
 type UnimplementedPublicServiceServer struct {
 }
 
-func (UnimplementedPublicServiceServer) Create(context.Context, *PublicCreate) (*vote.Void, error) {
+func (UnimplementedPublicServiceServer) Create(context.Context, *PublicCreate) (*Public, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedPublicServiceServer) Update(context.Context, *PublicUpdate) (*vote.Void, error) {
@@ -126,6 +139,9 @@ func (UnimplementedPublicServiceServer) GetById(context.Context, *PublicById) (*
 }
 func (UnimplementedPublicServiceServer) GetAll(context.Context, *GetAllPublicReq) (*GetAllPublicRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+}
+func (UnimplementedPublicServiceServer) IsValidPublic(context.Context, *ValidPublicReq) (*ValidPublicRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsValidPublic not implemented")
 }
 func (UnimplementedPublicServiceServer) mustEmbedUnimplementedPublicServiceServer() {}
 
@@ -230,6 +246,24 @@ func _PublicService_GetAll_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PublicService_IsValidPublic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidPublicReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PublicServiceServer).IsValidPublic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PublicService_IsValidPublic_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PublicServiceServer).IsValidPublic(ctx, req.(*ValidPublicReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PublicService_ServiceDesc is the grpc.ServiceDesc for PublicService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -256,6 +290,10 @@ var PublicService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAll",
 			Handler:    _PublicService_GetAll_Handler,
+		},
+		{
+			MethodName: "IsValidPublic",
+			Handler:    _PublicService_IsValidPublic_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
