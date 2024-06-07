@@ -17,17 +17,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	liss, err := net.Listen("tcp", ":8081")
+	liss, err := net.Listen("tcp", ":8085")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
-	vote.RegisterElectionServiceServer(s, service.NewElectionService(db))
-	vote.RegisterCandidateServiceServer(s, service.NewCandidateService(db))
-	vote.RegisterPublicVoteServiceServer(s, service.NewPublicVoteService(db))
+	serVoting := grpc.NewServer()
+	vote.RegisterElectionServiceServer(serVoting, service.NewElectionService(db))
+	vote.RegisterCandidateServiceServer(serVoting, service.NewCandidateService(db))
+	vote.RegisterPublicVoteServiceServer(serVoting, service.NewPublicVoteService(db))
 	log.Printf("server listening at %v", liss.Addr())
-	if err := s.Serve(liss); err != nil {
+	if err := serVoting.Serve(liss); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }

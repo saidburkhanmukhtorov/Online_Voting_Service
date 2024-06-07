@@ -20,25 +20,25 @@ func NewPublic(db *pgx.Conn) *PublicDb {
 }
 
 // Create a new public record
-func (pub *PublicDb) Create(ctx context.Context, publicReq *public.PublicCreate) error {
+func (pub *PublicDb) Create(ctx context.Context, publicReq *public.PublicCreate) (*public.Void, error) {
 	query := `
 		INSERT INTO public (id, name, last_name, phone, email, birthday, gender, party_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	`
 	birthday, err := time.Parse("2006-01-02", publicReq.Birthday)
 	if err!= nil {
-        return fmt.Errorf("failed to parse birthday: %v", err)
+        return nil, err
     }
 
 	_, err = pub.Db.Exec(ctx, query, publicReq.Id, publicReq.Name, publicReq.LastName, publicReq.Phone, publicReq.Email, birthday, publicReq.Gender, publicReq.PartyId)
 	if err != nil {
-		return fmt.Errorf("failed to insert public record: %v", err)
+        return nil, err
 	}
-	return nil
+	return nil, err
 }
 
 // Update an existing public record
-func (pub *PublicDb) Update(ctx context.Context, publicReq *public.PublicUpdate) error {
+func (pub *PublicDb) Update(ctx context.Context, publicReq *public.PublicUpdate) (*public.Void, error) {
 	query := `
 		UPDATE public
 		SET name = $1, last_name = $2, phone = $3, email = $4, birthday = $5, gender = $6, party_id = $7, updated_at = NOW()
@@ -46,13 +46,13 @@ func (pub *PublicDb) Update(ctx context.Context, publicReq *public.PublicUpdate)
 	`
 	_, err := pub.Db.Exec(ctx, query, publicReq.Name, publicReq.LastName, publicReq.Phone, publicReq.Email, publicReq.Birthday, publicReq.Gender, publicReq.PartyId, publicReq.Id)
 	if err != nil {
-		return fmt.Errorf("failed to update public record: %v", err)
+        return nil, err
 	}
-	return nil
+	return nil, err
 }
 
 // Delete an existing public record
-func (pub *PublicDb) Delete(ctx context.Context, publicReq *public.PublicDelete) error {
+func (pub *PublicDb) Delete(ctx context.Context, publicReq *public.PublicDelete) (*public.Void, error) {
 	query := `
 		UPDATE public
 		SET deleted_at = NOW()
@@ -60,9 +60,9 @@ func (pub *PublicDb) Delete(ctx context.Context, publicReq *public.PublicDelete)
 	`
 	_, err := pub.Db.Exec(ctx, query, publicReq.Id)
 	if err != nil {
-		return fmt.Errorf("failed to delete public record: %v", err)
+        return nil, err
 	}
-	return nil
+	return nil, err
 }
 
 // GetById retrieves a public record by ID

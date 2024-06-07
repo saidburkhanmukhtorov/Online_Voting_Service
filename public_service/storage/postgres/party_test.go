@@ -34,7 +34,7 @@ func CreateTestParty() *party.PartyCreate {
 		Id:          uuid.NewString(),
 		Name:        "Party A",
 		Slogan:      "Slogan A",
-		OpenedDate:  "2024-01-01",
+		OpenedDate:  "2016-01-24",
 		Description: "Description A",
 	}
 
@@ -44,7 +44,7 @@ func TestCreateParty(t *testing.T) {
 	part := newTestParty(t)
 	req := CreateTestParty()
 
-	err := part.Create(context.Background(), req)
+	_, err := part.Create(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Failed to create party record: %v", err)
 	}
@@ -65,12 +65,12 @@ func TestDeleteParty(t *testing.T) {
 	part := newTestParty(t)
 	req := CreateTestParty()
 
-	err := part.Create(context.Background(), req)
+	_, err := part.Create(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Failed to create party record: %v", err)
 	}
 
-	err = part.Delete(context.Background(), &party.PartyDelete{Id: req.Id})
+	_, err = part.Delete(context.Background(), &party.PartyDelete{Id: req.Id})
 	if err != nil {
 		t.Fatalf("Failed to delete party record: %v", err)
 	}
@@ -87,7 +87,7 @@ func TestUpdateParty(t *testing.T) {
 	part := newTestParty(t)
 	req := CreateTestParty()
 
-	err := part.Create(context.Background(), req)
+	_, err := part.Create(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Failed to create party record: %v", err)
 	}
@@ -106,7 +106,7 @@ func TestGetAllParties(t *testing.T) {
 	part := newTestParty(t)
 	req := CreateTestParty()
 
-	err := part.Create(context.Background(), req)
+	_, err := part.Create(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Failed to create party record: %v", err)
 	}
@@ -125,7 +125,7 @@ func TestGetPartyById(t *testing.T) {
 	part := newTestParty(t)
 	req := CreateTestParty()
 
-	err := part.Create(context.Background(), req)
+	_, err := part.Create(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Failed to create party record: %v", err)
 	}

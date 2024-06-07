@@ -35,7 +35,7 @@ func CreateTestPublic() *public.PublicCreate {
 		LastName: "LastName A",
 		Phone:    "Phone A",
 		Email:    "Email A",
-		Birthday: "2024-06-07",
+		Birthday: "1997q-06-07",
         Gender:   "f",
         PartyId:  "b384b482-b97c-4494-a6c6-e10b4ab11c0f",
 	}
@@ -45,7 +45,7 @@ func TestCreatePublic(t *testing.T) {
 	pub := newTestPublic(t)
 	req := CreateTestPublic()
 
-	err := pub.Create(context.Background(), req)
+	_, err := pub.Create(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Failed to create public record: %v", err)	
 	}
@@ -65,7 +65,7 @@ func TestUpdatePublic(t *testing.T) {
 	pub := newTestPublic(t)
     req := CreateTestPublic()
 
-    err := pub.Create(context.Background(), req)
+    _, err := pub.Create(context.Background(), req)
     if err!= nil {
         t.Fatalf("Failed to create public record: %v", err)
     }
@@ -86,12 +86,12 @@ func TestDeletePublic(t *testing.T) {
 	pub := newTestPublic(t)
     req := CreateTestPublic()
 
-    err := pub.Create(context.Background(), req)
+    _, err := pub.Create(context.Background(), req)
     if err!= nil {
         t.Fatalf("Failed to create public record: %v", err)
     }
 
-    err = pub.Delete(context.Background(), &public.PublicDelete{Id: req.Id})
+   _,  err = pub.Delete(context.Background(), &public.PublicDelete{Id: req.Id})
     if err!= nil {
         t.Fatalf("Failed to delete public record: %v", err)
     }
@@ -109,7 +109,7 @@ func TestGetPublicById(t *testing.T) {
 	pub := newTestPublic(t)
     req := CreateTestPublic()
 
-    err := pub.Create(context.Background(), req)
+    _, err := pub.Create(context.Background(), req)
     if err!= nil {
         t.Fatalf("Failed to create public record: %v", err)
     }

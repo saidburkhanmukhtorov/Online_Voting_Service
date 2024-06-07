@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	public "github.com/myfirstgo/online_voting_service/public_service/genproto"
@@ -19,20 +20,24 @@ func NewParty(db *pgx.Conn) *PartyDb {
 }
 
 // Create a new party record
-func (party *PartyDb) Create(ctx context.Context, req *public.PartyCreate) error {
+func (party *PartyDb) Create(ctx context.Context, req *public.PartyCreate) (*public.Void, error) {
 	query := `
-		INSERT INTO party(id, name, slogan, opened_date, description, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+		INSERT INTO party(id, name, slogan, opened_date, description)
+		VALUES ($1, $2, $3, $4, $5)
 	`
-	_, err := party.Db.Exec(ctx, query, req.Id, req.Name, req.Slogan, req.OpenedDate, req.Description)
+	openedDate, err := time.Parse("2006-01-02", req.OpenedDate)
 	if err != nil {
-		return fmt.Errorf("failed to insert party record: %v", err)
+		return nil, err
 	}
-	return nil
+	_, err = party.Db.Exec(ctx, query, req.Id, req.Name, req.Slogan, openedDate, req.Description)
+	if err != nil {
+		return nil, err
+	}
+	return nil, err
 }
 
 // Update an existing party record
-func (party *PartyDb) Update(ctx context.Context, req *public.PartyUpdate) error {
+func (party *PartyDb) Update(ctx context.Context, req *public.PartyUpdate) (*public.Void, error) {
 	query := `
 		UPDATE party
 		SET name = $1, slogan = $2, opened_date = $3, description = $4, updated_at = NOW()
@@ -40,13 +45,14 @@ func (party *PartyDb) Update(ctx context.Context, req *public.PartyUpdate) error
 	`
 	_, err := party.Db.Exec(ctx, query, req.Name, req.Slogan, req.OpenedDate, req.Description, req.Id)
 	if err != nil {
-		return fmt.Errorf("failed to update party record: %v", err)
+		return nil, err	
 	}
-	return nil
+	return nil, err
+
 }
 
 // Delete an existing party record
-func (party *PartyDb) Delete(ctx context.Context, req *public.PartyDelete) error {
+func (party *PartyDb) Delete(ctx context.Context, req *public.PartyDelete) (*public.Void, error) {
 	query := `
 		UPDATE party_table
 		SET deleted_at = NOW()
@@ -54,9 +60,9 @@ func (party *PartyDb) Delete(ctx context.Context, req *public.PartyDelete) error
 	`
 	_, err := party.Db.Exec(ctx, query, req.Id)
 	if err != nil {
-		return fmt.Errorf("failed to delete party record: %v", err)
+		return nil, err		
 	}
-	return nil
+	return nil, err
 }
 
 // GetById retrieves a party record by ID
@@ -69,10 +75,12 @@ func (party *PartyDb) GetById(ctx context.Context, req *public.PartyById) (*publ
 	row := party.Db.QueryRow(ctx, query, req.Id)
 
 	var res public.Party
+
 	err := row.Scan(&res.Id, &res.Name, &res.Slogan, &res.OpenedDate, &res.Description, &res.CreatedAt, &res.UpdatedAt, &res.DeletedAt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get party record by ID: %v", err)
 	}
+	fmt.Println(res.OpenedDate)
 	return &res, nil
 }
 

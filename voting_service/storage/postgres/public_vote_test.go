@@ -16,11 +16,11 @@ import (
 // Create a test database connection pool for PublicVote
 func newTestPublicVote(t *testing.T) *PublicVote {
 	connString := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s",
-		"sayyidmuhammad",
+		"postgres",
 		"root",
 		"localhost",
 		5432,
-		"vote",
+		"voting_db",
 	)
 
 	db, err := pgx.Connect(context.Background(), connString)
