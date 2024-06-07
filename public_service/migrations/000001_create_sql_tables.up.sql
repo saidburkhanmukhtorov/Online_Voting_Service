@@ -1,4 +1,4 @@
-CREATE TABLE party(
+CREATE TABLE parties(
     id UUID PRIMARY KEY,
     name VARCHAR(256),
     slogan VARCHAR,
@@ -18,7 +18,7 @@ CREATE TABLE public(
     email VARCHAR(64) UNIQUE,
     birthday DATE,
     gender gender,
-    party_id UUID REFERENCES party(id) NOT NULL,
+    parties_id UUID REFERENCES parties(id) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     deleted_at BIGINT DEFAULT 0

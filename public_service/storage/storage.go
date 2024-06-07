@@ -11,7 +11,7 @@ type StorageI interface {
 	Public() PublicI
 }
 type PartyI interface {
-	Create(ctx context.Context, partyReq *public.PartyCreate) error
+	// Create(ctx context.Context, partyReq *public.PartyCreate) (*public.Party, error)
 	Update(ctx context.Context, partyReq *public.PartyUpdate) error
 	Delete(ctx context.Context, partyReq *public.PartyDelete) error
 	GetById(ctx context.Context, partyReq *public.PartyById) (*public.Party, error)

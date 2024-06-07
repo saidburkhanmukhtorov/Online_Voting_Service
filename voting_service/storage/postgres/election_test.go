@@ -15,8 +15,8 @@ import (
 func newTestElection(t *testing.T) *ElectionDb {
 
 	connString := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s",
-		"sayyidmuhammad", // Replace with your database username
-		"root",           // Replace with your database password
+		"postgres", // Replace with your database username
+		"0101",           // Replace with your database password
 		"localhost",      // Replace with your database host
 		5432,             // Replace with your database port
 		"vote",           // Replace with your database name

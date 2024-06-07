@@ -269,7 +269,7 @@ func (Electiondb *ElectionDb) Update(ctx context.Context, election *vote.Electio
 	count := 1
 	query := `
 		UPDATE 
-			election 
+			election  
 		SET `
 	filter := ``
 
